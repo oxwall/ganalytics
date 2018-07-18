@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="ganalytics" label="Google Analytics" language_tag="en" language_label="English">
+    <key name="admin_index_google_analytics_code_save_error_message"><value>Please submit valid value</value></key>
+    <key name="admin_index_google_analytics_code_save_success_message"><value>Parameters updated</value></key>
+    <key name="admin_settings_google_analytics_code_desc"><value>This is how Google Analytics identifies your site. &lt;a href="http://www.google.com/analytics/learn/setupchecklist.html"&gt;Read more&lt;/a&gt;</value></key>
+    <key name="admin_settings_google_analytics_code_label"><value>Js Code</value></key>
+</prefix>

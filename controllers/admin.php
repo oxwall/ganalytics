@@ -47,9 +47,11 @@ class GANALYTICS_CTRL_Admin extends ADMIN_CTRL_Abstract
         $this->setPageHeading(OW::getLanguage()->text('ganalytics', 'admin_index_heading'));
         $this->setPageHeadingIconClass('ow_ic_gear_wheel');
 
-        $form = new Form('ganalytics_web_id');
-        $element = new TextField('web_property_id');
+        $form = new Form('google_analytics_code');
+
+        $element = new Textarea('google_analytics_code');
         $form->addElement($element);
+
         $submit = new Submit('submit');
         $submit->setValue(OW::getLanguage()->text('admin', 'save_btn_label'));
         $form->addElement($submit);
@@ -57,20 +59,28 @@ class GANALYTICS_CTRL_Admin extends ADMIN_CTRL_Abstract
         if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
         {
             $data = $form->getValues();
-            if ( !empty($data['web_property_id']) && strlen(trim($data['web_property_id'])) > 0 )
+            if ( !empty($data['google_analytics_code']) && strlen(trim($data['google_analytics_code'])) > 0 )
             {
-                OW::getConfig()->saveConfig('ganalytics', 'web_property_id', trim($data['web_property_id']));
-                OW::getFeedback()->info(OW::getLanguage()->text('ganalytics', 'admin_index_property_id_save_success_message'));
+                $googleAnalyticsCode = htmlentities(trim($data['google_analytics_code']));
+
+                if( !get_magic_quotes_gpc() )
+                {
+                    $googleAnalyticsCode = addslashes($googleAnalyticsCode);
+                }
+
+                OW::getConfig()->saveConfig('ganalytics', 'google_analytics_code', $googleAnalyticsCode);
+                OW::getFeedback()->info(OW::getLanguage()->text('ganalytics', 'admin_index_google_analytics_code_save_success_message'));
             }
             else
             {
-                OW::getFeedback()->error(OW::getLanguage()->text('ganalytics', 'admin_index_property_id_save_error_message'));
+                OW::getFeedback()->error(OW::getLanguage()->text('ganalytics', 'admin_index_google_analytics_code_save_error_message'));
             }
 
             $this->redirect();
         }
 
-        $element->setValue(OW::getConfig()->getValue('ganalytics', 'web_property_id'));
+        $googleAnalyticsCode = stripslashes(html_entity_decode(OW::getConfig()->getValue('ganalytics', 'google_analytics_code')));
+        $element->setValue($googleAnalyticsCode);
         $this->addForm($form);
     }
 }
