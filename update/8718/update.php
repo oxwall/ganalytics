@@ -50,6 +50,4 @@ if ( !OW::getConfig()->configExists('ganalytics', 'google_analytics_code') )
     OW::getConfig()->addConfig('ganalytics', 'google_analytics_code', $googleAnalyticsCodeExample);
 }
 
-OW::getPluginManager()->addPluginSettingsRouteName('ganalytics', 'ganalytics_admin');
-
-OW::getLanguage()->importPluginLangs(OW::getPluginManager()->getPlugin('ganalytics')->getRootDir().'langs.zip', 'ganalytics', true);
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs");

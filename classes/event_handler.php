@@ -29,27 +29,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$googleAnalyticsCodeExample = htmlentities("
-<!-- Google Analytics -->
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-XXXXX-Y', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-<!-- End Google Analytics -->
-");
-
-if( !get_magic_quotes_gpc() )
+class GANALYTICS_CLASS_EventHandler
 {
-    $googleAnalyticsCodeExample = addslashes($googleAnalyticsCodeExample);
+    private static $classInstance;
+
+    public static function getInstance()
+    {
+        if ( self::$classInstance === null )
+        {
+            self::$classInstance = new self();
+        }
+
+        return self::$classInstance;
+    }
+
+    private function __construct()
+    {
+
+    }
+
+    public function init()
+    {
+        OW::getEventManager()->bind(OW_EventManager::ON_PLUGINS_INIT, [$this, 'afterInit']);
+    }
+
+    public function afterInit()
+    {
+        OW::getEventManager()->bind(OW_EventManager::ON_FINALIZE, [$this, 'googleAnalyticsAddCode']);
+        OW::getEventManager()->bind('admin.add_admin_notification', [$this, 'googleAnalyticsAdminNotification']);
+    }
+
+    public function googleAnalyticsAddCode( OW_Event $event )
+    {
+        $googleAnalyticsCode = stripslashes(html_entity_decode(OW::getConfig()->getValue('ganalytics', 'google_analytics_code')));
+
+        if ( $googleAnalyticsCode !== null )
+        {
+            OW::getDocument()->appendBody($googleAnalyticsCode);
+        }
+    }
+
+    public function googleAnalyticsAdminNotification( BASE_CLASS_EventCollector $event )
+    {
+        $webPropertyId = OW::getConfig()->getValue('ganalytics', 'web_property_id');
+
+        if ( empty($webPropertyId) )
+        {
+            $event->add(OW::getLanguage()->text('ganalytics', 'admin_notification_text', array('link' => OW::getRouter()->urlForRoute('ganalytics_admin'))));
+        }
+    }
 }
-
-if ( !OW::getConfig()->configExists('ganalytics', 'google_analytics_code') )
-{
-    OW::getConfig()->addConfig('ganalytics', 'google_analytics_code', $googleAnalyticsCodeExample);
-}
-
-OW::getPluginManager()->addPluginSettingsRouteName('ganalytics', 'ganalytics_admin');
-
-OW::getLanguage()->importPluginLangs(OW::getPluginManager()->getPlugin('ganalytics')->getRootDir().'langs.zip', 'ganalytics', true);
