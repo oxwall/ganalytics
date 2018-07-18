@@ -32,21 +32,11 @@ class GANALYTICS_CLASS_EventHandler
 
     public function googleAnalyticsAddCode( OW_Event $event )
     {
-        $webPropertyId = trim(OW::getConfig()->getValue('mganalytics', 'web_property_id'));
+        $googleAnalyticsCode = stripslashes(html_entity_decode(OW::getConfig()->getValue('ganalytics', 'google_analytics_code')));
 
-        if ( $webPropertyId !== null )
+        if ( $googleAnalyticsCode !== null )
         {
-            $code = "
-            <!-- Google Analytics -->
-            <script>
-                window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-                ga('create', '" . $webPropertyId . "', 'auto');
-                ga('send', 'pageview');
-            </script>
-            <script async src='https://www.google-analytics.com/analytics.js'></script>
-            <!-- End Google Analytics -->";
-
-            OW::getDocument()->appendBody($code);
+            OW::getDocument()->appendBody($googleAnalyticsCode);
         }
     }
 

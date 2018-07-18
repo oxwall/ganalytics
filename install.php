@@ -29,9 +29,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-if ( !OW::getConfig()->configExists('ganalytics', 'web_property_id') )
+$googleAnalyticsCodeExample = htmlentities("
+<!-- Google Analytics -->
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+<!-- End Google Analytics -->
+");
+
+if( !get_magic_quotes_gpc() )
 {
-    OW::getConfig()->addConfig('ganalytics', 'web_property_id', null);
+    $googleAnalyticsCodeExample = addslashes($googleAnalyticsCodeExample);
+}
+
+if ( !OW::getConfig()->configExists('ganalytics', 'google_analytics_code') )
+{
+    OW::getConfig()->addConfig('ganalytics', 'google_analytics_code', $googleAnalyticsCodeExample);
 }
 
 OW::getPluginManager()->addPluginSettingsRouteName('ganalytics', 'ganalytics_admin');
